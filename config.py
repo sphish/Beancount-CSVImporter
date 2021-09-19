@@ -6,7 +6,7 @@ from CSVImporter import Col, Importer, Drcr
 
 currency = "CNY"
 
-drcr_dict = {"支出": Drcr.DEBIT, "收入": Drcr.CREDIT}
+drcr_dict = {"支出": Drcr.DEBIT, "收入": Drcr.CREDIT, "已支出": Drcr.DEBIT, "已收入": Drcr.CREDIT, "其他": Drcr.CREDIT}
 refund_keyword = "退款"
 
 iconfig_wechat = {
@@ -22,46 +22,25 @@ iconfig_wechat = {
     Col.TYPE: "交易类型",
 }
 
-wechat_account_map = {
-    "assets": {
-        "DEFAULT": "Assets:Wechat:MiniFund",
-        "0000|春田花花银行": "Liabilities:CreditCard:SFFB:0000",
-        "零钱": "Assets:Wechat:MiniFund",
-    },
-    "debit": {
-        "DEFAULT": "Expenses:Unknown",
-        "自动宝|全家|友礼汇": "Expenses:Food:Snacks",
-        "王者荣耀": "Expenses:Game:OnlineGame:HonourofKings",
-        "飞车": "Expenses:Game:OnlineGame:QQSpeed",
-        "出租车": "Expenses:Transport:Taxi",
-        "中国邮政": "Expenses:ExpressPostage",
-    },
-    "credit": {
-        "DEFAULT": "Income:Unknown",
-        "群收款|应收": "Assets:Receivable",
-        "转账": "Income:TransferIn",
-        "微信红包": "Income:Wechat:RedPacket",
-    },
-}
-
 iconfig_alipay = {
-    Col.DATE: "交易创建时间",
+    Col.DATE: "交易时间",
     Col.PAYEE: "交易对方",
-    Col.NARRATION: "商品名称",
-    Col.ACCOUNT: "备注",
-    Col.AMOUNT: "金额（元）",
+    Col.NARRATION: "商品说明",
+    Col.ACCOUNT: "收/付款方式",
+    Col.AMOUNT: "金额",
     Col.DRCR: "收/支",
-    Col.STATUS: "资金状态",
-    Col.TXN_TIME: "交易创建时间",
-    Col.TXN_DATE: "交易创建时间",
-    Col.TYPE: "类型",
+    Col.STATUS: "交易状态",
+    Col.TXN_TIME: "交易时间",
+    Col.TXN_DATE: "交易时间",
+    Col.TYPE: "交易分类",
 }
 
-alipay_account_map = {
+account_map = {
     "assets": {
-        "DEFAULT": "Liabilities:CreditCard:SFFB:0000",
+        "DEFAULT": "Unknown"
         "0000|春田花花银行": "Liabilities:CreditCard:SFFB:0000",
         "余额宝": "Assets:Alipay:YuEBao",
+        "零钱": "Assets:Wechat:MiniFund",
     },
     "debit": {
         "DEFAULT": "Expenses:Unknown",
@@ -87,25 +66,26 @@ alipay_account_map = {
     },
 }
 
-
 wechat_importer = Importer(
     iconfig_wechat,
+    "",
     currency,
     "微信支付账单",
     16,
     drcr_dict,
     refund_keyword,
-    wechat_account_map,
+    account_map,
 )
 
 alipay_importer = Importer(
     iconfig_alipay,
+    "",
     currency,
     "alipay_record",
-    4,
+    1,
     drcr_dict,
     refund_keyword,
-    alipay_account_map,
+    account_map,
 )
 
 CONFIG = [wechat_importer, alipay_importer]
