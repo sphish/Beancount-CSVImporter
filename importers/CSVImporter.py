@@ -1,7 +1,7 @@
 """csv importer.
 """
-__copyright__ = "Copyright (C) 2020 Shangyan Zhou"
-__license__ = "GNU GPLv2"
+__copyright__ = "Copyright (C) 2021 Shangyan Zhou"
+__license__ = "GNU LGPLv3"
 
 import sys
 import csv
@@ -152,8 +152,10 @@ def get_DRCR_status(iconfig: [Col, str], row, drcr_dict):
     """
 
     try:
-        if Col.DRCR in iconfig:
+        if Col.DRCR in iconfig and len(row[iconfig[Col.DRCR]]):
             return drcr_dict[row[iconfig[Col.DRCR]]]
+        elif Col.STATUS in iconfig:
+            return drcr_dict[row[iconfig[Col.STATUS]]]
         else:
             if Col.AMOUNT_CREDIT in iconfig and row[iconfig[Col.AMOUNT_CREDIT]]:
                 return Drcr.CREDIT
@@ -171,6 +173,7 @@ class Importer(importer.ImporterProtocol):
     def __init__(
         self,
         config: Dict[Col, str],
+        default_account: str,
         currency: str,
         file_name_prefix: str,
         skip_lines: int = 0,
@@ -182,6 +185,7 @@ class Importer(importer.ImporterProtocol):
 
         Args:
           config: A dict of Col enum types to the names or indexes of the columns.
+          default_account: An account string, the default account to post this to.
           currency: A currency string, the currenty of this account.
           file_name_prefix: Used for identification.
           skip_lines: Skip first x (garbage) lines of file.
@@ -229,7 +233,9 @@ class Importer(importer.ImporterProtocol):
             return False
         if not os.path.basename(file.name).startswith(self.file_name_prefix):
             return False
-        iconfig, _ = normalize_config(self.config, file.head(), self.skip_lines)
+
+        # Alipay record file always have a large header.
+        iconfig, _ = normalize_config(self.config, file.head(num_bytes=131072), self.skip_lines)
         return len(iconfig) == len(self.config)
 
     def extract(self, file, existing_entries=None):
@@ -237,7 +243,7 @@ class Importer(importer.ImporterProtocol):
 
         # Normalize the configuration to fetch by index.
         iconfig, has_header = normalize_config(
-            self.config, file.head(), self.skip_lines
+            self.config, file.head(num_bytes=131072), self.skip_lines
         )
 
         reader = csv.reader(io.StringIO(strip_blank(file.contents())))
