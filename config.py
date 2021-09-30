@@ -37,7 +37,7 @@ iconfig_alipay = {
 
 account_map = {
     "assets": {
-        "DEFAULT": "Unknown"
+        "DEFAULT": "Unknown",
         "0000|春田花花银行": "Liabilities:CreditCard:SFFB:0000",
         "余额宝": "Assets:Alipay:YuEBao",
         "零钱": "Assets:Wechat:MiniFund",
