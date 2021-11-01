@@ -1,7 +1,7 @@
 """csv importer.
 """
 __copyright__ = "Copyright (C) 2021 Shangyan Zhou"
-__license__ = "GNU LGPLv3"
+__license__ = "MIT"
 
 import sys
 import csv
