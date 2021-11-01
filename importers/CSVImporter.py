@@ -430,6 +430,7 @@ def normalize_config(config, head, skip_lines: int = 0):
     assert skip_lines >= 0
     for _ in range(skip_lines):
         head = head[head.find("\n") + 1 :]
+    head = head[: head.find("\n") + 1]
 
     head = strip_blank(head)
     has_header = csv.Sniffer().has_header(head)
