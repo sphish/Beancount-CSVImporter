@@ -208,7 +208,7 @@ class Importer(importer.ImporterProtocol):
     def file_date(self, file):
         "Get the maximum date from the file."
         iconfig, has_header = normalize_config(
-            self.config, file.head(), self.skip_lines
+            self.config, file.contents(), self.skip_lines
         )
         if Col.DATE in iconfig:
             reader = csv.reader(open(io.StringIO(strip_blank(file.contents()))))
@@ -234,8 +234,7 @@ class Importer(importer.ImporterProtocol):
         if not os.path.basename(file.name).startswith(self.file_name_prefix):
             return False
 
-        # Alipay record file always have a large header.
-        iconfig, _ = normalize_config(self.config, file.head(num_bytes=131072), self.skip_lines)
+        iconfig, _ = normalize_config(self.config, file.contents(), self.skip_lines)
         return len(iconfig) == len(self.config)
 
     def extract(self, file, existing_entries=None):
@@ -243,7 +242,7 @@ class Importer(importer.ImporterProtocol):
 
         # Normalize the configuration to fetch by index.
         iconfig, has_header = normalize_config(
-            self.config, file.head(num_bytes=131072), self.skip_lines
+            self.config, file.contents(), self.skip_lines
         )
 
         reader = csv.reader(io.StringIO(strip_blank(file.contents())))
