@@ -470,7 +470,7 @@ def mapping_account(account_map, keyword):
     for account_keywords in account_map.keys():
         if account_keywords == "DEFAULT":
             continue
-        if re.search(account_keywords, keyword):
+        if re.search(account_keywords, keyword) or account_keywords == keyword:
             account_name = account_map[account_keywords]
             break
     return account_name
